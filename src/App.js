@@ -19,22 +19,32 @@ const App = () => {
     setSelectedOptions(newSelectedOptions);
   
     const negativePrompts = [];
-    const otherOptions = [];
+    const otherOptionsList = [];
   
     Array.from(newSelectedOptions).forEach((option) => {
-      if (options[0].items.includes(option)) {
+      if (option.startsWith('other-')) {
+        const groupId = option.slice(6);
+        if (otherOptions[groupId]) {
+          if (groupId === 'negative-prompt') {
+            negativePrompts.push(otherOptions[groupId]);
+          } else {
+            otherOptionsList.push(otherOptions[groupId]);
+          }
+        }
+      } else if (options[0].items.includes(option)) {
         negativePrompts.push(option);
       } else {
-        otherOptions.push(option);
+        otherOptionsList.push(option);
       }
     });
   
     setOutput(
-      `imagine "${subject}, ${otherOptions.join(', ')}"${
+      `imagine "${subject}, ${otherOptionsList.join(', ')}"${
         negativePrompts.length ? ` --negative-prompt "${negativePrompts.join(', ')}"` : ''
       }`
     );
   };
+  
   
   const handleSubjectChange = (e) => {
     setSubject(e.target.value);
@@ -66,7 +76,11 @@ const App = () => {
       if (option.startsWith('other-')) {
         const groupId = option.slice(6);
         if (otherOptions[groupId]) {
-          otherOptionsList.push(otherOptions[groupId]);
+          if (groupId === 'negative-prompt') {
+            negativePrompts.push(otherOptions[groupId]);
+          } else {
+            otherOptionsList.push(otherOptions[groupId]);
+          }
         }
       } else if (options[0].items.includes(option)) {
         negativePrompts.push(option);
@@ -81,17 +95,18 @@ const App = () => {
       }`
     );
   };
-  
+    
   const handleOtherChange = (e, group) => {
-    setOtherOptions({
+    const updatedOtherOptions = {
       ...otherOptions,
       [group.id]: e.target.value,
-    });
-
+    };
+    setOtherOptions(updatedOtherOptions);
+  
     const newSelectedOptions = new Set(selectedOptions);
     newSelectedOptions.add(`other-${group.id}`);
     setSelectedOptions(newSelectedOptions);
-    updateOutput(subject, newSelectedOptions, otherOptions);
+    updateOutput(subject, newSelectedOptions, updatedOtherOptions);
   };
   
 
