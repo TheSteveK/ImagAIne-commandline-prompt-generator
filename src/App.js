@@ -7,69 +7,73 @@ import "./styles.css";
 const App = () => {
   const [subject, setSubject] = useState("");
   const [includeNegativePrompt, setIncludeNegativePrompt] = useState(false);
-  const [selectedOptions, setSelectedOptions] = useState(
-    new Set(preSelectedNegativePrompts)
-  );
+  const [selectedOptions, setSelectedOptions] = useState(new Set());
   const [output, setOutput] = useState("");
   const [otherOptions, setOtherOptions] = useState({});
 
   const handleNegativePromptToggle = (e) => {
-    setIncludeNegativePrompt(e.target.checked);
-    if (e.target.checked) {
-      const newSelectedOptions = new Set([
-        ...selectedOptions,
-        ...preSelectedNegativePrompts,
-      ]);
-      setSelectedOptions(newSelectedOptions);
-      updateOutput(subject, newSelectedOptions, otherOptions);
-    } else {
-      const newSelectedOptions = new Set(
-        [...selectedOptions].filter(
-          (item) => !preSelectedNegativePrompts.includes(item)
-        )
-      );
-      setSelectedOptions(newSelectedOptions);
-      updateOutput(subject, newSelectedOptions, otherOptions);
-    }
-  };
+  setIncludeNegativePrompt(e.target.checked);
+  if (e.target.checked) {
+    const newSelectedOptions = new Set([
+      ...selectedOptions,
+      ...preSelectedNegativePrompts,
+    ]);
+    setSelectedOptions(newSelectedOptions);
+    updateOutput(subject, newSelectedOptions, otherOptions);
+  } else {
+    const newSelectedOptions = new Set(
+      [...selectedOptions].filter((item) => {
+        return (
+          !preSelectedNegativePrompts.includes(item) &&
+          !item.startsWith("other-negative-prompt") &&
+          !options[0].items.includes(item)
+        );
+      })
+    );
+    setSelectedOptions(newSelectedOptions);
+    updateOutput(subject, newSelectedOptions, otherOptions);
+  }
+};
+
 
   const handleChange = (e, item) => {
-    const newSelectedOptions = new Set(selectedOptions);
-    if (e.target.checked) {
-      newSelectedOptions.add(item);
-    } else {
-      newSelectedOptions.delete(item);
-    }
-    setSelectedOptions(newSelectedOptions);
+  const newSelectedOptions = new Set(selectedOptions);
+  if (e.target.checked) {
+    newSelectedOptions.add(item);
+  } else {
+    newSelectedOptions.delete(item);
+  }
+  setSelectedOptions(newSelectedOptions);
 
-    const negativePrompts = [];
-    const otherOptionsList = [];
+  const negativePrompts = [];
+  const otherOptionsList = [];
 
-    Array.from(newSelectedOptions).forEach((option) => {
-      if (option.startsWith("other-")) {
-        const groupId = option.slice(6);
-        if (otherOptions[groupId]) {
-          if (groupId === "negative-prompt") {
-            negativePrompts.push(otherOptions[groupId]);
-          } else {
-            otherOptionsList.push(otherOptions[groupId]);
-          }
+  Array.from(newSelectedOptions).forEach((option) => {
+    if (option.startsWith("other-")) {
+      const groupId = option.slice(6);
+      if (otherOptions[groupId]) {
+        if (groupId === "negative-prompt") {
+          negativePrompts.push(otherOptions[groupId]);
+        } else {
+          otherOptionsList.push(otherOptions[groupId]);
         }
-      } else if (options[0].items.includes(option)) {
-        negativePrompts.push(option);
-      } else {
-        otherOptionsList.push(option);
       }
-    });
+    } else if (includeNegativePrompt && options[0].items.includes(option)) {
+      negativePrompts.push(option);
+    } else {
+      otherOptionsList.push(option);
+    }
+  });
 
-    setOutput(
-      `imagine "${subject}, ${otherOptionsList.join(", ")}"${
-        negativePrompts.length
-          ? ` --negative-prompt "${negativePrompts.join(", ")}"`
-          : ""
-      }`
-    );
-  };
+  setOutput(
+    `imagine "${subject}, ${otherOptionsList.join(", ")}"${
+      negativePrompts.length
+        ? ` --negative-prompt "${negativePrompts.join(", ")}"`
+        : ""
+    }`
+  );
+};
+
 
   const handleSubjectChange = (e) => {
     setSubject(e.target.value);
@@ -95,37 +99,38 @@ const App = () => {
   };
 
   const updateOutput = (subject, selectedOptions, otherOptions) => {
-    const negativePrompts = [];
-    const otherOptionsList = [];
-    const finalOptions = [];
+  const negativePrompts = [];
+  const otherOptionsList = [];
+  const finalOptions = [];
 
-    Array.from(selectedOptions).forEach((option) => {
-      if (option.startsWith("other-")) {
-        const groupId = option.slice(6);
-        if (otherOptions[groupId]) {
-          if (groupId === "negative-prompt") {
-            negativePrompts.push(otherOptions[groupId]);
-          } else {
-            otherOptionsList.push(otherOptions[groupId]);
-          }
+  Array.from(selectedOptions).forEach((option) => {
+    if (option.startsWith("other-")) {
+      const groupId = option.slice(6);
+      if (otherOptions[groupId]) {
+        if (groupId === "negative-prompt") {
+          negativePrompts.push(otherOptions[groupId]);
+        } else {
+          otherOptionsList.push(otherOptions[groupId]);
         }
-      } else if (options[0].items.includes(option)) {
-        negativePrompts.push(option);
-      } else {
-        finalOptions.push(option);
       }
-    });
+    } else if (options[0].items.includes(option)) {
+      negativePrompts.push(option);
+    } else {
+      finalOptions.push(option);
+    }
+  });
 
-    setOutput(
-      `imagine "${subject}, ${[...finalOptions, ...otherOptionsList].join(
-        ", "
-      )}"${
-        negativePrompts.length
-          ? ` --negative-prompt "${negativePrompts.join(", ")}"`
-          : ""
-      }`
-    );
-  };
+    const combinedOptions = [...finalOptions, ...otherOptionsList];
+    console.log(combinedOptions.length);
+  setOutput(
+    `imagine "${subject}${combinedOptions.length > 0 ? ", " + combinedOptions.join(", ") : ""}"${
+      negativePrompts.length
+        ? ` --negative-prompt "${negativePrompts.join(", ")}"`
+        : ""
+    }`
+  );
+};
+
 
   const handleOtherChange = (e, group) => {
     const updatedOtherOptions = {
@@ -179,7 +184,7 @@ const App = () => {
           <fieldset>
             <legend className="visually-hidden">{group.title}</legend>
             {group.items.map((item) => (
-              <div key={item}>
+              <div key={`${group.id}-${item}`}>
                 <input
                   type="checkbox"
                   id={`${group.id}-${item}`}
