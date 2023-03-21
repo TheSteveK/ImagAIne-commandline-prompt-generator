@@ -1,13 +1,37 @@
 import React, { useState } from "react";
 import options from "./options";
+import preSelectedNegativePrompts from "./preselected-neg-prompts";
 
 import "./styles.css";
 
 const App = () => {
   const [subject, setSubject] = useState("");
-  const [selectedOptions, setSelectedOptions] = useState(new Set());
+  const [includeNegativePrompt, setIncludeNegativePrompt] = useState(false);
+  const [selectedOptions, setSelectedOptions] = useState(
+    new Set(preSelectedNegativePrompts)
+  );
   const [output, setOutput] = useState("");
   const [otherOptions, setOtherOptions] = useState({});
+
+  const handleNegativePromptToggle = (e) => {
+    setIncludeNegativePrompt(e.target.checked);
+    if (e.target.checked) {
+      const newSelectedOptions = new Set([
+        ...selectedOptions,
+        ...preSelectedNegativePrompts,
+      ]);
+      setSelectedOptions(newSelectedOptions);
+      updateOutput(subject, newSelectedOptions, otherOptions);
+    } else {
+      const newSelectedOptions = new Set(
+        [...selectedOptions].filter(
+          (item) => !preSelectedNegativePrompts.includes(item)
+        )
+      );
+      setSelectedOptions(newSelectedOptions);
+      updateOutput(subject, newSelectedOptions, otherOptions);
+    }
+  };
 
   const handleChange = (e, item) => {
     const newSelectedOptions = new Set(selectedOptions);
@@ -129,14 +153,25 @@ const App = () => {
   return (
     <div className="container">
       <h1>Image Generation AI Prompt</h1>
-      <label htmlFor="subject">Subject:</label>
+      <label htmlFor="subject">Subject (prompt):</label>
       <input
+        className="subject-input"
         type="text"
         id="subject"
         name="subject"
         value={subject}
         onChange={handleSubjectChange}
       />
+
+      <div>
+        <input
+          type="checkbox"
+          id="negative-prompt-toggle"
+          onChange={handleNegativePromptToggle}
+          checked={includeNegativePrompt}
+        />
+        <label htmlFor="negative-prompt-toggle">Include Negative Prompts</label>
+      </div>
 
       {options.map((group) => (
         <details key={group.id} className="checkbox-group">
@@ -151,32 +186,36 @@ const App = () => {
                   name={item}
                   value={item}
                   onChange={(e) => handleChange(e, item)}
+                  checked={selectedOptions.has(item)}
                 />
                 <label htmlFor={`${group.id}-${item}`}>{item}</label>
               </div>
             ))}
-            <div>
-              <input
-                type="checkbox"
-                id={`${group.id}-other`}
-                name="other"
-                value="Other"
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    const newSelectedOptions = new Set(selectedOptions);
-                    newSelectedOptions.add(`other-${group.id}`);
-                    setSelectedOptions(newSelectedOptions);
-                  } else {
-                    const newSelectedOptions = new Set(selectedOptions);
-                    newSelectedOptions.delete(`other-${group.id}`);
-                    setSelectedOptions(newSelectedOptions);
-                    updateOutput(subject, newSelectedOptions, otherOptions);
-                  }
-                }}
-              />
-              <label htmlFor={`${group.id}-other`}>Other:</label>
+            <div className="other-option">
+              <div className="other-option-checkbox">
+                <input
+                  type="checkbox"
+                  id={`${group.id}-other`}
+                  name="other"
+                  value="Other"
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      const newSelectedOptions = new Set(selectedOptions);
+                      newSelectedOptions.add(`other-${group.id}`);
+                      setSelectedOptions(newSelectedOptions);
+                    } else {
+                      const newSelectedOptions = new Set(selectedOptions);
+                      newSelectedOptions.delete(`other-${group.id}`);
+                      setSelectedOptions(newSelectedOptions);
+                      updateOutput(subject, newSelectedOptions, otherOptions);
+                    }
+                  }}
+                />
+                <label htmlFor={`${group.id}-other`}>Other:</label>
+              </div>
               <input
                 type="text"
+                className="other-option-input"
                 id={`${group.id}-other-text`}
                 name={`${group.id}-other-text`}
                 aria-labelledby={`${group.id}-other-label`}
@@ -184,20 +223,10 @@ const App = () => {
                 onChange={(e) => handleOtherChange(e, group)}
                 style={{
                   display: selectedOptions.has(`other-${group.id}`)
-                    ? "inline-block"
+                    ? "flex"
                     : "none",
                 }}
               />
-              <span
-                id={`${group.id}-other-label`}
-                style={{
-                  display: selectedOptions.has(`other-${group.id}`)
-                    ? "inline"
-                    : "none",
-                }}
-              >
-                (Separate multiple prompts with a comma)
-              </span>
             </div>
           </fieldset>
         </details>
