@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import options from "./options";
 import preSelectedNegativePrompts from "./preselected-neg-prompts";
+import SubjectInput from "./components/subject-input";
+import OptionsGroup from "./components/options-group";
+import OutputSection from "./components/output-section";
+import AdvancedOptionsGroup from "./components/advanced-options-group";
 
 import "./styles.css";
 
@@ -10,70 +14,69 @@ const App = () => {
   const [selectedOptions, setSelectedOptions] = useState(new Set());
   const [output, setOutput] = useState("");
   const [otherOptions, setOtherOptions] = useState({});
+  const [isNegativePromptExpanded] = useState(false);
 
   const handleNegativePromptToggle = (e) => {
-  setIncludeNegativePrompt(e.target.checked);
-  if (e.target.checked) {
-    const newSelectedOptions = new Set([
-      ...selectedOptions,
-      ...preSelectedNegativePrompts,
-    ]);
-    setSelectedOptions(newSelectedOptions);
-    updateOutput(subject, newSelectedOptions, otherOptions);
-  } else {
-    const newSelectedOptions = new Set(
-      [...selectedOptions].filter((item) => {
-        return (
-          !preSelectedNegativePrompts.includes(item) &&
-          !item.startsWith("other-negative-prompt") &&
-          !options[0].items.includes(item)
-        );
-      })
-    );
-    setSelectedOptions(newSelectedOptions);
-    updateOutput(subject, newSelectedOptions, otherOptions);
-  }
-};
-
+    setIncludeNegativePrompt(e.target.checked);
+    if (e.target.checked) {
+      const newSelectedOptions = new Set([
+        ...selectedOptions,
+        ...preSelectedNegativePrompts,
+      ]);
+      setSelectedOptions(newSelectedOptions);
+      updateOutput(subject, newSelectedOptions, otherOptions);
+    } else {
+      const newSelectedOptions = new Set(
+        [...selectedOptions].filter((item) => {
+          return (
+            !preSelectedNegativePrompts.includes(item) &&
+            !item.startsWith("other-negative-prompt") &&
+            !options[0].items.includes(item)
+          );
+        })
+      );
+      setSelectedOptions(newSelectedOptions);
+      updateOutput(subject, newSelectedOptions, otherOptions);
+    }
+  };
 
   const handleChange = (e, item) => {
-  const newSelectedOptions = new Set(selectedOptions);
-  if (e.target.checked) {
-    newSelectedOptions.add(item);
-  } else {
-    newSelectedOptions.delete(item);
-  }
-  setSelectedOptions(newSelectedOptions);
-
-  const negativePrompts = [];
-  const otherOptionsList = [];
-
-  Array.from(newSelectedOptions).forEach((option) => {
-    if (option.startsWith("other-")) {
-      const groupId = option.slice(6);
-      if (otherOptions[groupId]) {
-        if (groupId === "negative-prompt") {
-          negativePrompts.push(otherOptions[groupId]);
-        } else {
-          otherOptionsList.push(otherOptions[groupId]);
-        }
-      }
-    } else if (includeNegativePrompt && options[0].items.includes(option)) {
-      negativePrompts.push(option);
+    const newSelectedOptions = new Set(selectedOptions);
+    if (e.target.checked) {
+      newSelectedOptions.add(item);
     } else {
-      otherOptionsList.push(option);
+      newSelectedOptions.delete(item);
     }
-  });
+    setSelectedOptions(newSelectedOptions);
 
-  setOutput(
-    `imagine "${subject}, ${otherOptionsList.join(", ")}"${
-      negativePrompts.length
-        ? ` --negative-prompt "${negativePrompts.join(", ")}"`
-        : ""
-    }`
-  );
-};
+    const negativePrompts = [];
+    const otherOptionsList = [];
 
+    Array.from(newSelectedOptions).forEach((option) => {
+      if (option.startsWith("other-")) {
+        const groupId = option.slice(6);
+        if (otherOptions[groupId]) {
+          if (groupId === "negative-prompt") {
+            negativePrompts.push(otherOptions[groupId]);
+          } else {
+            otherOptionsList.push(otherOptions[groupId]);
+          }
+        }
+      } else if (includeNegativePrompt && options[0].items.includes(option)) {
+        negativePrompts.push(option);
+      } else {
+        otherOptionsList.push(option);
+      }
+    });
+
+    setOutput(
+      `imagine "${subject}, ${otherOptionsList.join(", ")}"${
+        negativePrompts.length
+          ? ` --negative-prompt "${negativePrompts.join(", ")}"`
+          : ""
+      }`
+    );
+  };
 
   const handleSubjectChange = (e) => {
     setSubject(e.target.value);
@@ -99,38 +102,39 @@ const App = () => {
   };
 
   const updateOutput = (subject, selectedOptions, otherOptions) => {
-  const negativePrompts = [];
-  const otherOptionsList = [];
-  const finalOptions = [];
+    const negativePrompts = [];
+    const otherOptionsList = [];
+    const finalOptions = [];
 
-  Array.from(selectedOptions).forEach((option) => {
-    if (option.startsWith("other-")) {
-      const groupId = option.slice(6);
-      if (otherOptions[groupId]) {
-        if (groupId === "negative-prompt") {
-          negativePrompts.push(otherOptions[groupId]);
-        } else {
-          otherOptionsList.push(otherOptions[groupId]);
+    Array.from(selectedOptions).forEach((option) => {
+      if (option.startsWith("other-")) {
+        const groupId = option.slice(6);
+        if (otherOptions[groupId]) {
+          if (groupId === "negative-prompt") {
+            negativePrompts.push(otherOptions[groupId]);
+          } else {
+            otherOptionsList.push(otherOptions[groupId]);
+          }
         }
+      } else if (options[0].items.includes(option)) {
+        negativePrompts.push(option);
+      } else {
+        finalOptions.push(option);
       }
-    } else if (options[0].items.includes(option)) {
-      negativePrompts.push(option);
-    } else {
-      finalOptions.push(option);
-    }
-  });
+    });
 
     const combinedOptions = [...finalOptions, ...otherOptionsList];
     console.log(combinedOptions.length);
-  setOutput(
-    `imagine "${subject}${combinedOptions.length > 0 ? ", " + combinedOptions.join(", ") : ""}"${
-      negativePrompts.length
-        ? ` --negative-prompt "${negativePrompts.join(", ")}"`
-        : ""
-    }`
-  );
-};
-
+    setOutput(
+      `imagine "${subject}${
+        combinedOptions.length > 0 ? ", " + combinedOptions.join(", ") : ""
+      }"${
+        negativePrompts.length
+          ? ` --negative-prompt "${negativePrompts.join(", ")}"`
+          : ""
+      }`
+    );
+  };
 
   const handleOtherChange = (e, group) => {
     const updatedOtherOptions = {
@@ -143,6 +147,28 @@ const App = () => {
     newSelectedOptions.add(`other-${group.id}`);
     setSelectedOptions(newSelectedOptions);
     updateOutput(subject, newSelectedOptions, updatedOtherOptions);
+  };
+
+  const handleInputChange = (e) => {
+    const { id, value, type, checked } = e.target;
+    const item = options
+      .find((group) => group.id === "advanced-options-group")
+      .items.find((i) => i.id === id);
+
+    const newSelectedOptions = new Map(selectedOptions);
+
+    if (type === "checkbox") {
+      if (checked) {
+        newSelectedOptions.set(id, `${item.command} ${value}`);
+      } else {
+        newSelectedOptions.delete(id);
+      }
+    } else {
+      newSelectedOptions.set(id, `${item.command} ${value}`);
+    }
+
+    setSelectedOptions(newSelectedOptions);
+    // Update the output as needed
   };
 
   const handleReset = () => {
@@ -159,102 +185,45 @@ const App = () => {
     <div className="container">
       <h1>Image Generation AI Prompt</h1>
       <label htmlFor="subject">Subject (prompt):</label>
-      <input
-        className="subject-input"
-        type="text"
-        id="subject"
-        name="subject"
-        value={subject}
-        onChange={handleSubjectChange}
+      <SubjectInput
+        subject={subject}
+        handleSubjectChange={handleSubjectChange}
       />
-
-      <div>
-        <input
-          type="checkbox"
-          id="negative-prompt-toggle"
-          onChange={handleNegativePromptToggle}
-          checked={includeNegativePrompt}
+      <OptionsGroup
+        group={options[0]}
+        selectedOptions={selectedOptions}
+        handleChange={handleChange}
+        handleOtherChange={handleOtherChange}
+        isExpanded={isNegativePromptExpanded}
+        isNegativePrompt={true}
+        includeNegativePrompt={includeNegativePrompt}
+        handleNegativePromptToggle={handleNegativePromptToggle}
+      />
+      {options.slice(1).map((group) => (
+        <OptionsGroup
+          key={group.id}
+          group={group}
+          selectedOptions={selectedOptions}
+          handleChange={handleChange}
+          handleOtherChange={handleOtherChange}
         />
-        <label htmlFor="negative-prompt-toggle">Include Negative Prompts</label>
-      </div>
-
-      {options.map((group) => (
-        <details key={group.id} className="checkbox-group">
-          <summary>{group.title}</summary>
-          <fieldset>
-            <legend className="visually-hidden">{group.title}</legend>
-            {group.items.map((item) => (
-              <div key={`${group.id}-${item}`}>
-                <input
-                  type="checkbox"
-                  id={`${group.id}-${item}`}
-                  name={item}
-                  value={item}
-                  onChange={(e) => handleChange(e, item)}
-                  checked={selectedOptions.has(item)}
-                />
-                <label htmlFor={`${group.id}-${item}`}>{item}</label>
-              </div>
-            ))}
-            <div className="other-option">
-              <div className="other-option-checkbox">
-                <input
-                  type="checkbox"
-                  id={`${group.id}-other`}
-                  name="other"
-                  value="Other"
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      const newSelectedOptions = new Set(selectedOptions);
-                      newSelectedOptions.add(`other-${group.id}`);
-                      setSelectedOptions(newSelectedOptions);
-                    } else {
-                      const newSelectedOptions = new Set(selectedOptions);
-                      newSelectedOptions.delete(`other-${group.id}`);
-                      setSelectedOptions(newSelectedOptions);
-                      updateOutput(subject, newSelectedOptions, otherOptions);
-                    }
-                  }}
-                />
-                <label htmlFor={`${group.id}-other`}>Other:</label>
-              </div>
-              <input
-                type="text"
-                className="other-option-input"
-                id={`${group.id}-other-text`}
-                name={`${group.id}-other-text`}
-                aria-labelledby={`${group.id}-other-label`}
-                disabled={!selectedOptions.has(`other-${group.id}`)}
-                onChange={(e) => handleOtherChange(e, group)}
-                style={{
-                  display: selectedOptions.has(`other-${group.id}`)
-                    ? "flex"
-                    : "none",
-                }}
-              />
-            </div>
-          </fieldset>
-        </details>
       ))}
+      {options
+        .filter((group) => group.id === "multi-input-group")
+        .map((group) => (
+          <AdvancedOptionsGroup
+            key={group.id}
+            group={group}
+            selectedOptions={selectedOptions}
+            handleInputChange={handleInputChange}
+          />
+        ))}
 
-      <div className="output-heading-container">
-        <h2>Output</h2>
-        {output && (
-          <div className="button-container">
-            <button onClick={handleReset}>Reset</button>
-            <button
-              className="copy-button"
-              onClick={handleCopyClick}
-              aria-label="Copy result to clipboard"
-            >
-              Copy
-            </button>
-          </div>
-        )}
-      </div>
-      <div className="output-container">
-        <pre className="output">{output}</pre>
-      </div>
+      <OutputSection
+        output={output}
+        handleReset={handleReset}
+        handleCopyClick={handleCopyClick}
+      />
     </div>
   );
 };

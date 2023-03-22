@@ -108,6 +108,10 @@ button:active {
   background-color: #004085;
 }
 
+.copied {
+  background-color: #4caf50; 
+}
+
 .other-option {
   display: flex;
   flex-direction: row;
