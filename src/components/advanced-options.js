@@ -3,66 +3,76 @@ import PropTypes from "prop-types";
 import optionsAdvanced from "../options-advanced";
 
 const AdvancedOptions = ({ handleAdvancedOptions }) => {
+  const getWidthBasedOnMax = (max) => {
+    const numberOfDigits = Math.floor(Math.log10(max)) + 1;
+    return `${numberOfDigits + 1.5}ch`;
+  };
+
+  const renderOptions = (importance) =>
+    optionsAdvanced
+      .filter((item) => item.importance === importance)
+      .map((item) => {
+        if (item.type === "select") {
+          return (
+            <div key={item.id} className={item.importance}>
+              <label htmlFor={item.id}>{item.label}:</label>
+              <select
+                id={item.id}
+                name={item.id}
+                onChange={handleAdvancedOptions}
+              >
+                {item.options.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          );
+        }
+        return (
+          <div key={item.id} className={item.importance}>
+            <label htmlFor={item.id}>{item.label}:</label>
+            <input
+              type={item.type}
+              id={item.id}
+              name={item.id}
+              min={item.min && item.min}
+              max={item.max && item.max}
+              onChange={handleAdvancedOptions}
+              style={
+                item.type === "number"
+                  ? { width: getWidthBasedOnMax(item.max) }
+                  : {}
+              }
+            />
+          </div>
+        );
+      });
+
   return (
     <details className="advanced-options">
       <summary>Advanced Options</summary>
       <fieldset>
         <legend className="visually-hidden">Advanced Options</legend>
-        {optionsAdvanced.map((item) => {
-          if (item.type === "number" || item.type === "text") {
-            return (
-              <div key={item.id}>
-                <label htmlFor={item.id}>{item.label}:</label>
-                <input
-                  type={item.type}
-                  id={item.id}
-                  name={item.id}
-                  min={item.min && item.min}
-                  max={item.max && item.max}
-                  onChange={handleAdvancedOptions}
-                />
-              </div>
-            );
-          } else if (item.type === "checkbox") {
-            return (
-              <div key={item.id}>
-                <input
-                  type="checkbox"
-                  id={item.id}
-                  name={item.id}
-                  onChange={handleAdvancedOptions}
-                />
-                <label htmlFor={item.id}>{item.label}</label>
-              </div>
-            );
-          } else if (item.type === "select") {
-            return (
-              <div key={item.id}>
-                <label htmlFor={item.id}>{item.label}:</label>
-                <select
-                  id={item.id}
-                  name={item.id}
-                  onChange={handleAdvancedOptions}
-                >
-                  {item.options.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            );
-          }
-          // Add more input types here if necessary
-          return null;
-        })}
+        <div className="primary">
+          <div className="group-title">Primary</div>
+          {renderOptions("primary")}
+        </div>
+        <div className="secondary">
+          <div className="group-title">Secondary</div>
+          {renderOptions("secondary")}
+        </div>
+        <div className="tertiary">
+          <div className="group-title">Tertiary</div>
+          {renderOptions("tertiary")}
+        </div>
       </fieldset>
     </details>
   );
 };
 
 AdvancedOptions.propTypes = {
-  optionsAdvanced: PropTypes.array.isRequired,
   handleAdvancedOptions: PropTypes.func.isRequired,
 };
 
