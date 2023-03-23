@@ -1,10 +1,11 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import options from "./options";
 import preSelectedNegativePrompts from "./preselected-neg-prompts";
 import SubjectInput from "./components/subject-input";
 import OptionsGroup from "./components/options-group";
 import OutputSection from "./components/output-section";
-import AdvancedOptionsGroup from "./components/advanced-options-group";
+import AdvancedOptions from "./components/advanced-options";
 
 import "./styles.css";
 
@@ -15,6 +16,7 @@ const App = () => {
   const [output, setOutput] = useState("");
   const [otherOptions, setOtherOptions] = useState({});
   const [isNegativePromptExpanded] = useState(false);
+  const [advancedOptions, setAdvancedOptions] = useState({});
 
   const handleNegativePromptToggle = (e) => {
     setIncludeNegativePrompt(e.target.checked);
@@ -101,7 +103,12 @@ const App = () => {
     );
   };
 
-  const updateOutput = (subject, selectedOptions, otherOptions) => {
+  const updateOutput = (
+    subject,
+    selectedOptions,
+    otherOptions,
+    advancedOptions
+  ) => {
     const negativePrompts = [];
     const otherOptionsList = [];
     const finalOptions = [];
@@ -124,7 +131,12 @@ const App = () => {
     });
 
     const combinedOptions = [...finalOptions, ...otherOptionsList];
-    console.log(combinedOptions.length);
+
+    const advancedOptionsString = Object.entries(advancedOptions)
+      .filter(([key, value]) => value !== "")
+      .map(([key, value]) => `${key} ${value}`)
+      .join(" ");
+
     setOutput(
       `imagine "${subject}${
         combinedOptions.length > 0 ? ", " + combinedOptions.join(", ") : ""
@@ -132,7 +144,7 @@ const App = () => {
         negativePrompts.length
           ? ` --negative-prompt "${negativePrompts.join(", ")}"`
           : ""
-      }`
+      } ${advancedOptionsString}`
     );
   };
 
@@ -149,26 +161,28 @@ const App = () => {
     updateOutput(subject, newSelectedOptions, updatedOtherOptions);
   };
 
-  const handleInputChange = (e) => {
-    const { id, value, type, checked } = e.target;
-    const item = options
-      .find((group) => group.id === "advanced-options-group")
-      .items.find((i) => i.id === id);
+  const handleAdvancedOptions = (e) => {
+    const { id, value, checked, type } = e.target;
 
-    const newSelectedOptions = new Map(selectedOptions);
+    // Create a copy of the current advanced options state
+    const updatedAdvancedOptions = { ...advancedOptions };
 
     if (type === "checkbox") {
-      if (checked) {
-        newSelectedOptions.set(id, `${item.command} ${value}`);
-      } else {
-        newSelectedOptions.delete(id);
-      }
+      // Update the advanced options state with the checkbox value
+      updatedAdvancedOptions[id] = checked;
     } else {
-      newSelectedOptions.set(id, `${item.command} ${value}`);
+      // Update the advanced options state with the input value
+      updatedAdvancedOptions[id] = value;
     }
 
-    setSelectedOptions(newSelectedOptions);
-    // Update the output as needed
+    // Update the advanced options state with the new value
+    setAdvancedOptions(updatedAdvancedOptions);
+
+    // Update the output string with the new advanced option
+    updateOutput(subject, selectedOptions, otherOptions, {
+      ...advancedOptions,
+      ...updatedAdvancedOptions,
+    });
   };
 
   const handleReset = () => {
@@ -208,16 +222,7 @@ const App = () => {
           handleOtherChange={handleOtherChange}
         />
       ))}
-      {options
-        .filter((group) => group.id === "multi-input-group")
-        .map((group) => (
-          <AdvancedOptionsGroup
-            key={group.id}
-            group={group}
-            selectedOptions={selectedOptions}
-            handleInputChange={handleInputChange}
-          />
-        ))}
+      <AdvancedOptions handleAdvancedOptions={handleAdvancedOptions} />
 
       <OutputSection
         output={output}
