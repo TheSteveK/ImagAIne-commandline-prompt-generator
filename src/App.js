@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import options from "./options";
 import preSelectedNegativePrompts from "./preselected-neg-prompts";
 import SubjectInput from "./components/subject-input";
@@ -17,6 +17,11 @@ const App = () => {
   const [otherOptions, setOtherOptions] = useState({});
   const [isNegativePromptExpanded] = useState(false);
   const [advancedOptions, setAdvancedOptions] = useState({});
+
+  //maintain state whenever user changes options
+  useEffect(() => {
+    updateOutput(subject, selectedOptions, otherOptions, advancedOptions);
+  }, [subject, selectedOptions, otherOptions, advancedOptions]);
 
   const handleNegativePromptToggle = (e) => {
     setIncludeNegativePrompt(e.target.checked);
@@ -134,7 +139,13 @@ const App = () => {
 
     const advancedOptionsString = Object.entries(advancedOptions)
       .filter(([key, value]) => value !== "")
-      .map(([key, value]) => `${key} ${value}`)
+      .map(([key, value]) => {
+        if (value === key) {
+          return `${value}`;
+        } else {
+          return `${key} ${value}`;
+        }
+      })
       .join(" ");
 
     setOutput(
@@ -168,8 +179,12 @@ const App = () => {
     const updatedAdvancedOptions = { ...advancedOptions };
 
     if (type === "checkbox") {
-      // Update the advanced options state with the checkbox value
-      updatedAdvancedOptions[id] = checked;
+      // Update the advanced options state with the ID if checked, otherwise remove it
+      if (checked) {
+        updatedAdvancedOptions[id] = id;
+      } else {
+        delete updatedAdvancedOptions[id];
+      }
     } else {
       // Update the advanced options state with the input value
       updatedAdvancedOptions[id] = value;

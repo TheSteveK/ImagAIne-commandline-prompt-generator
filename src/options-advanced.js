@@ -1,13 +1,4 @@
 const OptionsAdvanced = [
-  // Existing options
-  {
-    id: "--r",
-    label: "Number of images",
-    type: "number",
-    min: 1,
-    max: 100,
-    importance: "primary",
-  },
   {
     id: "--seed",
     label: "Seed",
@@ -16,6 +7,15 @@ const OptionsAdvanced = [
     max: 10000000000,
     importance: "primary",
   },
+  {
+    id: "-r",
+    label: "Number of images",
+    type: "number",
+    min: 1,
+    max: 100,
+    importance: "primary",
+  },
+
   {
     id: "control-image",
     label: "Control Image Path",
@@ -35,8 +35,8 @@ const OptionsAdvanced = [
     label: "Prompt strength",
     type: "number",
     min: 0.1,
-    max: 10,
-    importance: "secondary",
+    max: 1000,
+    importance: "primary",
   },
   {
     id: "--init-image",
@@ -69,6 +69,12 @@ const OptionsAdvanced = [
     importance: "secondary",
   },
   {
+    id: "--fix-faces",
+    label: "Run Fix Faces",
+    type: "checkbox",
+    importance: "secondary",
+  },
+  {
     id: "--height",
     label: "Image height",
     type: "number",
@@ -86,7 +92,42 @@ const OptionsAdvanced = [
     max: 10000,
     importance: "primary",
   },
-  // ... add more options as needed
+  {
+    id: "--model",
+    label: "Model",
+    type: "select",
+    options: [
+      { value: "SD-1.4", label: "SD-1.4" },
+      { value: "SD-1.5", label: "SD-1.5" },
+      { value: "SD-1.5-inpaint", label: "SD-1.5-inpaint" },
+      { value: "SD-2.0", label: "SD-2.0" },
+      { value: "SD-2.0-depth", label: "SD-2.0-depth" },
+      { value: "SD-2.0-inpaint", label: "SD-2.0-inpaint" },
+      { value: "SD-2.0-v", label: "SD-2.0-v" },
+      { value: "SD-2.1", label: "SD-2.1" },
+      { value: "SD-2.1-inpaint", label: "SD-2.1-inpaint" },
+      { value: "SD-2.1-v", label: "SD-2.1-v" },
+      { value: "edit", label: "edit" },
+      { value: "instruct-pix2pix", label: "instruct-pix2pix" },
+      { value: "oj", label: "oj" },
+      { value: "oj1", label: "oj1" },
+      { value: "oj2", label: "oj2" },
+      { value: "openjourney", label: "openjourney" },
+      { value: "openjourney-v1", label: "openjourney-v1" },
+      { value: "openjourney-v2", label: "openjourney-v2" },
+      { value: "sd14", label: "sd14" },
+      { value: "sd15", label: "sd15" },
+      { value: "sd15in", label: "sd15in" },
+      { value: "sd20", label: "sd20" },
+      { value: "sd20dep", label: "sd20dep" },
+      { value: "sd20in", label: "sd20in" },
+      { value: "sd20v", label: "sd20v" },
+      { value: "sd21", label: "sd21" },
+      { value: "sd21in", label: "sd21in" },
+      { value: "sd21v", label: "sd21v" },
+    ],
+    importance: "secondary",
+  },
 ];
 
 export default OptionsAdvanced;
