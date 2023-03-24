@@ -35,10 +35,6 @@ const App = () => {
     setOutput
   );
 
-  // const handleSubjectChange = (e) => {
-  //   setSubject(e.target.value);
-  // };
-
   return (
     <div className="container">
       <h1>Image Generation AI Prompt</h1>
