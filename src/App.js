@@ -1,22 +1,31 @@
 import React, { useState } from "react";
 import options from "./options";
-import preSelectedNegativePrompts from "./preselected-neg-prompts";
 import SubjectInput from "./components/subject-input";
 import OptionsGroup from "./components/options-group";
 import OutputSection from "./components/output-section";
 import AdvancedOptions from "./components/advanced-options";
 import useGenerateOutput from "./hooks/generate-output";
+import useOptions from "./hooks/use-options";
 
 import "./styles.css";
 
 const App = () => {
-  const [subject, setSubject] = useState("");
-  const [includeNegativePrompt, setIncludeNegativePrompt] = useState(false);
-  const [selectedOptions, setSelectedOptions] = useState(new Set());
+  // const [subject, setSubject] = useState("");
   const [output, setOutput] = useState("");
-  const [otherOptions, setOtherOptions] = useState({});
-  const [isNegativePromptExpanded] = useState(false);
-  const [advancedOptions, setAdvancedOptions] = useState({});
+
+  const {
+    includeNegativePrompt,
+    subject,
+    selectedOptions,
+    otherOptions,
+    advancedOptions,
+    handleNegativePromptToggle,
+    handleChange,
+    handleOtherChange,
+    handleAdvancedOptions,
+    resetOptions,
+    handleSubjectChange,
+  } = useOptions();
 
   useGenerateOutput(
     subject,
@@ -26,97 +35,9 @@ const App = () => {
     setOutput
   );
 
-  const handleNegativePromptToggle = (e) => {
-    setIncludeNegativePrompt(e.target.checked);
-    const newSelectedOptions = new Set(selectedOptions);
-    preSelectedNegativePrompts.forEach((item) => {
-      if (e.target.checked) {
-        newSelectedOptions.add(item);
-      } else {
-        newSelectedOptions.delete(item);
-      }
-    });
-    setSelectedOptions(newSelectedOptions);
-  };
-
-  const handleChange = (e, item) => {
-    const newSelectedOptions = new Set(selectedOptions);
-    if (e.target.checked) {
-      newSelectedOptions.add(item);
-    } else {
-      newSelectedOptions.delete(item);
-    }
-    setSelectedOptions(newSelectedOptions);
-  };
-
-  const handleSubjectChange = (e) => {
-    setSubject(e.target.value);
-  };
-
-  //    const combinedOptions = [...finalOptions, ...otherOptionsList];
-
-  //   const advancedOptionsString = Object.entries(advancedOptions)
-  //     // eslint-disable-next-line no-unused-vars
-  //     .filter(([key, value]) => value !== "")
-  //     .map(([key, value]) => {
-  //       if (value === key) {
-  //         return `${value}`;
-  //       } else {
-  //         return `${key} ${value}`;
-  //       }
-  //     })
-  //     .join(" ");
-
-  //   setOutput(
-  //     `imagine "${subject}${
-  //       combinedOptions.length > 0 ? ", " + combinedOptions.join(", ") : ""
-  //     }"${
-  //       negativePrompts.length
-  //         ? ` --negative-prompt "${negativePrompts.join(", ")}"`
-  //         : ""
-  //     } ${advancedOptionsString}`
-  //   );
+  // const handleSubjectChange = (e) => {
+  //   setSubject(e.target.value);
   // };
-
-  const handleOtherChange = (e, group) => {
-    const updatedOtherOptions = {
-      ...otherOptions,
-      [group.id]: e.target.value,
-    };
-    setOtherOptions(updatedOtherOptions);
-
-    const newSelectedOptions = new Set(selectedOptions);
-    newSelectedOptions.add(`other-${group.id}`);
-    setSelectedOptions(newSelectedOptions);
-  };
-
-  const handleAdvancedOptions = (e) => {
-    const { id, value, checked, type } = e.target;
-
-    const updatedAdvancedOptions = { ...advancedOptions };
-
-    if (type === "checkbox") {
-      if (checked) {
-        updatedAdvancedOptions[id] = id;
-      } else {
-        delete updatedAdvancedOptions[id];
-      }
-    } else {
-      updatedAdvancedOptions[id] = value;
-    }
-
-    setAdvancedOptions(updatedAdvancedOptions);
-  };
-
-  const handleReset = () => {
-    setSubject("");
-    setSelectedOptions(new Set());
-    setOutput("");
-  };
-
-  const handleCopyClick = () => {
-    navigator.clipboard.writeText(output);
-  };
 
   return (
     <div className="container">
@@ -131,7 +52,6 @@ const App = () => {
         selectedOptions={selectedOptions}
         handleChange={handleChange}
         handleOtherChange={handleOtherChange}
-        isExpanded={isNegativePromptExpanded}
         isNegativePrompt={true}
         includeNegativePrompt={includeNegativePrompt}
         handleNegativePromptToggle={handleNegativePromptToggle}
@@ -146,12 +66,7 @@ const App = () => {
         />
       ))}
       <AdvancedOptions handleAdvancedOptions={handleAdvancedOptions} />
-
-      <OutputSection
-        output={output}
-        handleReset={handleReset}
-        handleCopyClick={handleCopyClick}
-      />
+      <OutputSection output={output} handleReset={resetOptions} />;
     </div>
   );
 };

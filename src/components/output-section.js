@@ -1,17 +1,16 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 
-const OutputSection = ({ output, handleReset, handleCopyClick }) => {
+const OutputSection = ({ output, handleReset }) => {
   OutputSection.propTypes = {
     output: PropTypes.string.isRequired,
     handleReset: PropTypes.func.isRequired,
-    handleCopyClick: PropTypes.func.isRequired,
   };
 
   const [isCopied, setIsCopied] = useState(false);
 
-  const handleClick = () => {
-    handleCopyClick();
+  const handleCopyClick = () => {
+    navigator.clipboard.writeText(output);
     setIsCopied(true);
     setTimeout(() => {
       setIsCopied(false);
@@ -27,7 +26,7 @@ const OutputSection = ({ output, handleReset, handleCopyClick }) => {
             <button onClick={handleReset}>Reset</button>
             <button
               className={`copy-button ${isCopied ? "copied" : ""}`} // Add the 'copied' class when isCopied is true
-              onClick={handleClick}
+              onClick={handleCopyClick}
               aria-label="Copy result to clipboard"
             >
               {isCopied ? "Copied!" : "Copy"}

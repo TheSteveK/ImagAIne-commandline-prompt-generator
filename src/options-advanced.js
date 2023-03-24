@@ -14,6 +14,7 @@ const OptionsAdvanced = [
     min: 1,
     max: 100,
     importance: "primary",
+    defaultValue: "5",
   },
 
   {
@@ -29,6 +30,7 @@ const OptionsAdvanced = [
     min: 1,
     max: 1000,
     importance: "primary",
+    defautValue: "60",
   },
   {
     id: "--prompt-strength",
@@ -37,6 +39,7 @@ const OptionsAdvanced = [
     min: 0.1,
     max: 1000,
     importance: "primary",
+    defaultValue: "7",
   },
   {
     id: "--init-image",
@@ -66,6 +69,7 @@ const OptionsAdvanced = [
       { value: "jpg", label: "JPG" },
       { value: "png", label: "PNG" },
     ],
+    defaultValue: "png",
     importance: "secondary",
   },
   {
@@ -107,26 +111,12 @@ const OptionsAdvanced = [
       { value: "SD-2.1", label: "SD-2.1" },
       { value: "SD-2.1-inpaint", label: "SD-2.1-inpaint" },
       { value: "SD-2.1-v", label: "SD-2.1-v" },
-      { value: "edit", label: "edit" },
-      { value: "instruct-pix2pix", label: "instruct-pix2pix" },
-      { value: "oj", label: "oj" },
-      { value: "oj1", label: "oj1" },
-      { value: "oj2", label: "oj2" },
       { value: "openjourney", label: "openjourney" },
       { value: "openjourney-v1", label: "openjourney-v1" },
       { value: "openjourney-v2", label: "openjourney-v2" },
-      { value: "sd14", label: "sd14" },
-      { value: "sd15", label: "sd15" },
-      { value: "sd15in", label: "sd15in" },
-      { value: "sd20", label: "sd20" },
-      { value: "sd20dep", label: "sd20dep" },
-      { value: "sd20in", label: "sd20in" },
-      { value: "sd20v", label: "sd20v" },
-      { value: "sd21", label: "sd21" },
-      { value: "sd21in", label: "sd21in" },
-      { value: "sd21v", label: "sd21v" },
     ],
     importance: "secondary",
+    defaultValue: "openjourney-v2",
   },
 ];
 
