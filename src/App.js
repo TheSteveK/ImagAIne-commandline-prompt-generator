@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import options from "./options";
 import preSelectedNegativePrompts from "./preselected-neg-prompts";
 import SubjectInput from "./components/subject-input";
 import OptionsGroup from "./components/options-group";
 import OutputSection from "./components/output-section";
 import AdvancedOptions from "./components/advanced-options";
+import useGenerateOutput from "./hooks/generate-output";
 
 import "./styles.css";
 
@@ -17,9 +18,13 @@ const App = () => {
   const [isNegativePromptExpanded] = useState(false);
   const [advancedOptions, setAdvancedOptions] = useState({});
 
-  useEffect(() => {
-    updateOutput();
-  }, [subject, selectedOptions, otherOptions, advancedOptions]);
+  useGenerateOutput(
+    subject,
+    selectedOptions,
+    otherOptions,
+    advancedOptions,
+    setOutput
+  );
 
   const handleNegativePromptToggle = (e) => {
     setIncludeNegativePrompt(e.target.checked);
@@ -48,52 +53,30 @@ const App = () => {
     setSubject(e.target.value);
   };
 
-  const updateOutput = () => {
-    const negativePrompts = [];
-    const otherOptionsList = [];
-    const finalOptions = [];
+  //    const combinedOptions = [...finalOptions, ...otherOptionsList];
 
-    [...selectedOptions].forEach((option) => {
-      if (option.startsWith("other-")) {
-        const groupId = option.slice(6);
-        if (otherOptions[groupId]) {
-          if (groupId === "negative-prompt") {
-            negativePrompts.push(otherOptions[groupId]);
-          } else {
-            otherOptionsList.push(otherOptions[groupId]);
-          }
-        }
-      } else if (options[0].items.includes(option)) {
-        negativePrompts.push(option);
-      } else {
-        finalOptions.push(option);
-      }
-    });
+  //   const advancedOptionsString = Object.entries(advancedOptions)
+  //     // eslint-disable-next-line no-unused-vars
+  //     .filter(([key, value]) => value !== "")
+  //     .map(([key, value]) => {
+  //       if (value === key) {
+  //         return `${value}`;
+  //       } else {
+  //         return `${key} ${value}`;
+  //       }
+  //     })
+  //     .join(" ");
 
-    const combinedOptions = [...finalOptions, ...otherOptionsList];
-
-    const advancedOptionsString = Object.entries(advancedOptions)
-      // eslint-disable-next-line no-unused-vars
-      .filter(([key, value]) => value !== "")
-      .map(([key, value]) => {
-        if (value === key) {
-          return `${value}`;
-        } else {
-          return `${key} ${value}`;
-        }
-      })
-      .join(" ");
-
-    setOutput(
-      `imagine "${subject}${
-        combinedOptions.length > 0 ? ", " + combinedOptions.join(", ") : ""
-      }"${
-        negativePrompts.length
-          ? ` --negative-prompt "${negativePrompts.join(", ")}"`
-          : ""
-      } ${advancedOptionsString}`
-    );
-  };
+  //   setOutput(
+  //     `imagine "${subject}${
+  //       combinedOptions.length > 0 ? ", " + combinedOptions.join(", ") : ""
+  //     }"${
+  //       negativePrompts.length
+  //         ? ` --negative-prompt "${negativePrompts.join(", ")}"`
+  //         : ""
+  //     } ${advancedOptionsString}`
+  //   );
+  // };
 
   const handleOtherChange = (e, group) => {
     const updatedOtherOptions = {
