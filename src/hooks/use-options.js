@@ -24,16 +24,29 @@ const useOptions = () => {
   };
 
   const handleNegativePromptToggle = (e) => {
-    setIncludeNegativePrompt(e.target.checked);
+    const isChecked = e.target.checked;
+    setIncludeNegativePrompt(isChecked);
+
     const newSelectedOptions = new Set(selectedOptions);
     preSelectedNegativePrompts.forEach((item) => {
-      if (e.target.checked) {
+      if (isChecked) {
         newSelectedOptions.add(item);
       } else {
         newSelectedOptions.delete(item);
       }
     });
     setSelectedOptions(newSelectedOptions);
+
+    if (!isChecked) {
+      // Clear negative prompt-related otherOptions when includeNegativePrompt is unchecked
+      const updatedOtherOptions = { ...otherOptions };
+      preSelectedNegativePrompts.forEach((item) => {
+        if (Object.prototype.hasOwnProperty.call(updatedOtherOptions, item)) {
+          delete updatedOtherOptions[item];
+        }
+      });
+      setOtherOptions(updatedOtherOptions);
+    }
   };
 
   const handleChange = (e, item) => {

@@ -118,6 +118,32 @@ const OptionsAdvanced = [
     importance: "secondary",
     defaultValue: "openjourney-v2",
   },
+  {
+    id: "--sampler",
+    label: "Sampler",
+    type: "select",
+    options: [
+      { value: "plms", label: "PLMS" },
+      { value: "ddim", label: "DDIM (fast prototyping 8-15 steps)" },
+      { value: "k_dpm_fast", label: "K_DPM_Fast" },
+      { value: "k_dpm_adaptive", label: "K_DPM_Adaptive" },
+      { value: "k_lms", label: "K_LMS (default)" },
+      { value: "k_dpm_2", label: "K_DPM_2" },
+      {
+        value: "k_dpm_2_a",
+        label: "K_DPM_2_A (slow but good 30-80 steps)",
+      },
+      { value: "k_dpmpp_2m", label: "K_DPMPP_2M" },
+      { value: "k_dpmpp_2s_a", label: "K_DPMPP_2S_A" },
+      { value: "k_euler", label: "K_Euler" },
+      {
+        value: "k_euler_a",
+        label: "K_Euler_A (fast protyping, varied results)",
+      },
+      { value: "k_heun", label: "K_Heun" },
+    ],
+    importance: "secondary",
+  },
 ];
 
 export default OptionsAdvanced;

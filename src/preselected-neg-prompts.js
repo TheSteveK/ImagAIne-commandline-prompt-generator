@@ -1,3 +1,3 @@
-const preSelectedNegativePrompts = ["Ugly", "Duplication", "Out of frame"];
+const preSelectedNegativePrompts = ["Ugly", "Mutation", "Cancer", "Tumor"];
 
 export default preSelectedNegativePrompts;

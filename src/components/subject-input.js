@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 const SubjectInput = ({ subject, handleSubjectChange }) => {
   return (
-    <input
+    <textarea
       className="subject-input"
       type="text"
       id="subject"

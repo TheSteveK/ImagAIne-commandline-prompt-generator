@@ -47,6 +47,8 @@ const options = [
       "Text",
       "Watermark",
       "Bad art",
+      "Tumor",
+      "Cancer",
     ],
   },
   {
