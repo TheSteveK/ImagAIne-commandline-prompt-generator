@@ -23,7 +23,7 @@ const App = () => {
     handleChange,
     handleOtherChange,
     handleAdvancedOptions,
-    resetOptions,
+    handleReset,
     handleSubjectChange,
   } = useOptions();
 
@@ -32,6 +32,7 @@ const App = () => {
     selectedOptions,
     otherOptions,
     advancedOptions,
+    includeNegativePrompt,
     setOutput
   );
 
@@ -62,7 +63,7 @@ const App = () => {
         />
       ))}
       <AdvancedOptions handleAdvancedOptions={handleAdvancedOptions} />
-      <OutputSection output={output} handleReset={resetOptions} />;
+      <OutputSection output={output} handleReset={handleReset} />;
     </div>
   );
 };

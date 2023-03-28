@@ -6,6 +6,7 @@ const useGenerateOutput = (
   selectedOptions,
   otherOptions,
   advancedOptions,
+  includeNegativePrompt,
   setOutput
 ) => {
   useEffect(() => {
@@ -49,7 +50,7 @@ const useGenerateOutput = (
         `imagine "${subject}${
           combinedOptions.length > 0 ? ", " + combinedOptions.join(", ") : ""
         }"${
-          negativePrompts.length
+          includeNegativePrompt && negativePrompts.length
             ? ` --negative-prompt "${negativePrompts.join(", ")}"`
             : ""
         } ${advancedOptionsString}`
@@ -57,7 +58,14 @@ const useGenerateOutput = (
     };
 
     updateOutput();
-  }, [subject, selectedOptions, otherOptions, advancedOptions, setOutput]);
+  }, [
+    subject,
+    selectedOptions,
+    otherOptions,
+    advancedOptions,
+    includeNegativePrompt,
+    setOutput,
+  ]);
 };
 
 export default useGenerateOutput;

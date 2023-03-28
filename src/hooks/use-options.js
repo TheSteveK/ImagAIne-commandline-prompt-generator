@@ -35,18 +35,22 @@ const useOptions = () => {
         newSelectedOptions.delete(item);
       }
     });
-    setSelectedOptions(newSelectedOptions);
 
+    // Remove user-selected negative prompts when includeNegativePrompt is unchecked
     if (!isChecked) {
-      // Clear negative prompt-related otherOptions when includeNegativePrompt is unchecked
-      const updatedOtherOptions = { ...otherOptions };
-      preSelectedNegativePrompts.forEach((item) => {
-        if (Object.prototype.hasOwnProperty.call(updatedOtherOptions, item)) {
-          delete updatedOtherOptions[item];
+      selectedOptions.forEach((item) => {
+        if (item.startsWith("negative-prompt-")) {
+          newSelectedOptions.delete(item);
         }
       });
-      setOtherOptions(updatedOtherOptions);
+
+      // Clear the 'other' field for negative prompts
+      const newOtherOptions = { ...otherOptions };
+      delete newOtherOptions["negative-prompt-other"];
+      setOtherOptions(newOtherOptions);
     }
+
+    setSelectedOptions(newSelectedOptions);
   };
 
   const handleChange = (e, item) => {
@@ -87,6 +91,13 @@ const useOptions = () => {
     }
     setAdvancedOptions(updatedAdvancedOptions);
   };
+  const handleReset = () => {
+    setSubject("");
+    setIncludeNegativePrompt(false);
+    setSelectedOptions(new Set());
+    setOtherOptions({});
+    setAdvancedOptions(initialAdvancedOptions);
+  };
 
   return {
     subject,
@@ -99,6 +110,7 @@ const useOptions = () => {
     handleChange,
     handleOtherChange,
     handleAdvancedOptions,
+    handleReset,
   };
 };
 
