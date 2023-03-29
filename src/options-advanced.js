@@ -30,7 +30,7 @@ const OptionsAdvanced = [
     min: 1,
     max: 1000,
     importance: "primary",
-    defautValue: "60",
+    defaultValue: "60",
   },
   {
     id: "--prompt-strength",
@@ -143,6 +143,7 @@ const OptionsAdvanced = [
       { value: "k_heun", label: "K_Heun" },
     ],
     importance: "secondary",
+    defaultValue: "k_lms",
   },
 ];
 

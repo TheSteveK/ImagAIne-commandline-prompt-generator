@@ -62,7 +62,10 @@ const App = () => {
           handleOtherChange={handleOtherChange}
         />
       ))}
-      <AdvancedOptions handleAdvancedOptions={handleAdvancedOptions} />
+      <AdvancedOptions
+        handleAdvancedOptions={handleAdvancedOptions}
+        advancedOptions={advancedOptions}
+      />
       <OutputSection output={output} handleReset={handleReset} />;
     </div>
   );
