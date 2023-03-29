@@ -10,7 +10,6 @@ import useOptions from "./hooks/use-options";
 import "./styles.css";
 
 const App = () => {
-  // const [subject, setSubject] = useState("");
   const [output, setOutput] = useState("");
 
   const {

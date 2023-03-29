@@ -13,6 +13,20 @@ const OptionsGroup = ({
 }) => {
   const sortedItems = group.items.slice().sort();
 
+  const renderChildGroups = (childGroups) => {
+    return childGroups.map((childGroup) => (
+      <OptionsGroup
+        key={childGroup.id}
+        group={childGroup}
+        selectedOptions={selectedOptions}
+        handleChange={handleChange}
+        handleOtherChange={handleOtherChange}
+        isNegativePrompt={false}
+        includeNegativePrompt={false}
+      />
+    ));
+  };
+
   return (
     <details key={group.id} className="checkbox-group" open={isExpanded}>
       <summary>{group.title}</summary>
@@ -86,6 +100,7 @@ const OptionsGroup = ({
             </div>
           </>
         ) : null}
+        {group.children && renderChildGroups(group.children)}
       </fieldset>
     </details>
   );

@@ -73,6 +73,33 @@ label {
   }
 }
 
+.checkbox-group > details {
+  position: relative;
+  margin-left: 1rem;
+}
+
+.checkbox-group > details > summary {
+  cursor: pointer;
+}
+
+.checkbox-group > details > fieldset {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.checkbox-group > details > fieldset > div {
+  flex: 1 0 calc(50% - 0.5rem);
+}
+
+.other-option {
+  display: flex;
+  flex-direction: column;
+}
+.other-option-checkbox {
+  flex: 1;
+}
+
+
 details > summary {
   font-weight: bold;
   cursor: pointer;
@@ -246,4 +273,25 @@ button:active {
 
 .advanced-options fieldset label {
   margin-right: 0.5rem;
+}
+
+
+
+.details .child-group {
+  margin-left: 2rem;
+  margin-bottom: 1rem;
+}
+
+.details .child-group summary {
+  display: block;
+}
+
+.details .child-group fieldset {
+  display: block;
+  flex-wrap: nowrap;
+}
+
+.details .child-group fieldset div {
+  display: block;
+  width: 100%;
 }
