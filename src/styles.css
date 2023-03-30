@@ -16,11 +16,42 @@ body {
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
-  font-size: 2rem;
-  margin: 0 0 1.5rem;
-  text-align: center;
+.header {
+  position: relative;
+  background-color: #f8f9fa;
+  width: 100%;
 }
+
+.header-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Align items to the left */
+  flex-direction: column;
+  width: 100%; /* Change the width to 100% */
+  margin: 0 auto;
+}
+
+.header-image {
+  width: 100%;
+  max-width: 100%; /* Set the max-width to 100% */
+  height: auto;
+}
+
+.header-title {
+  position: absolute;
+  font-size: 2.5rem;
+  top: 50%;
+  left: 2%; /* Keep the left value to control the left margin of the title */
+  transform: translateY(-50%); /* Offset the position based on its own height */
+  color: #fff;
+  text-align: left; /* Align the text to the left */
+  max-width: 80%;
+  margin:0;
+  padding:0;
+}
+
+
 
 label {
   margin-left: 0.5rem;
@@ -302,4 +333,23 @@ button:active {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .floating-buttons {
+    display: none; /* Hide the buttons if the screen size is less than or equal to 768px */
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .floating-buttons {
+    top: 10%; /* Adjust the top position for medium-sized screens */
+  }
+}
+
+@media (min-width: 1025px) {
+  .floating-buttons {
+    top: 20%; /* Reset the top position for large screens */
+  }
 }
