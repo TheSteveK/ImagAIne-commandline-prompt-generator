@@ -294,3 +294,12 @@ button:active {
 .checkbox-group > details > summary + * {
   text-align: left;
 }
+
+.floating-buttons {
+  position: fixed;
+  top: 20%;
+  right: 15%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}

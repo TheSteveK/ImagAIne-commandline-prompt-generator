@@ -3,6 +3,7 @@ import options from "./options";
 import SubjectInput from "./components/subject-input";
 import OptionsGroup from "./components/options-group";
 import OutputSection from "./components/output-section";
+import ButtonsSection from "./components/buttons-section";
 import AdvancedOptions from "./components/advanced-options";
 import useGenerateOutput from "./hooks/generate-output";
 import useOptions from "./hooks/use-options";
@@ -38,6 +39,7 @@ const App = () => {
   return (
     <div className="container">
       <h1>Image Generation AI Prompt</h1>
+      <ButtonsSection handleReset={handleReset} output={output} />
       <label htmlFor="subject">Subject (prompt):</label>
       <SubjectInput
         subject={subject}
