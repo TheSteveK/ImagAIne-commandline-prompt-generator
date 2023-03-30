@@ -89,6 +89,18 @@ const useOptions = () => {
     } else {
       updatedAdvancedOptions[id] = value;
     }
+    // Set the number of images to 1 if there's a value in the seed option
+    if (id === "--seed" && value !== "") {
+      updatedAdvancedOptions["-r"] = "1";
+    } else if (
+      id === "-r" &&
+      advancedOptions["--seed"] !== "" &&
+      value !== "1"
+    ) {
+      // Reset the seed value if the number of images is changed from 1 to another value
+      updatedAdvancedOptions["--seed"] = "";
+    }
+
     setAdvancedOptions(updatedAdvancedOptions);
   };
   const handleReset = () => {
