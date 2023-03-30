@@ -41,17 +41,23 @@ label {
 }
 
 .checkbox-group fieldset {
-  border: none;
+   border: none;
   padding: 0;
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
 }
 
 .checkbox-group fieldset div {
-  flex-basis: 100%;
+  width: 100%;
   display: flex;
   align-items: center;
   margin-bottom: 0.5rem;
+}
+
+.checkbox-container {
+  display: flex;
+  flex-wrap: wrap;
 }
 
 /* media queries for fieldset wrapping */
@@ -83,22 +89,27 @@ label {
 }
 
 .checkbox-group > details > fieldset {
-  display: flex;
-  flex-wrap: wrap;
+  padding: 0;
 }
 
 .checkbox-group > details > fieldset > div {
-  flex: 1 0 calc(50% - 0.5rem);
+  /* flex: 1 0 calc(50% - 0.5rem); */
+   width: 100%;
+  display: block;
+  align-items: left;
+  margin-bottom: 0.5rem;
 }
 
 .other-option {
   display: flex;
   flex-direction: column;
+  height: auto;
+  align-items: flex-start;
 }
+
 .other-option-checkbox {
   flex: 1;
 }
-
 
 details > summary {
   font-weight: bold;
@@ -275,23 +286,11 @@ button:active {
   margin-right: 0.5rem;
 }
 
-
-
-.details .child-group {
-  margin-left: 2rem;
-  margin-bottom: 1rem;
+.child-groups {
+  display: flex;
+  flex-direction: column;
 }
 
-.details .child-group summary {
-  display: block;
-}
-
-.details .child-group fieldset {
-  display: block;
-  flex-wrap: nowrap;
-}
-
-.details .child-group fieldset div {
-  display: block;
-  width: 100%;
+.checkbox-group > details > summary + * {
+  text-align: left;
 }

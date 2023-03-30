@@ -48,19 +48,26 @@ const OptionsGroup = ({
         <legend className="visually-hidden">{group.title}</legend>
         {!isNegativePrompt || (isNegativePrompt && includeNegativePrompt) ? (
           <>
-            {sortedItems.map((item) => (
-              <div key={`${group.id}-${item}`}>
-                <input
-                  type="checkbox"
-                  id={`${group.id}-${item}`}
-                  name={item}
-                  value={item}
-                  onChange={(e) => handleChange(e, item)}
-                  checked={selectedOptions.has(item)}
-                />
-                <label htmlFor={`${group.id}-${item}`}>{item}</label>
-              </div>
-            ))}
+            <div className="checkbox-container">
+              {sortedItems.map((item) => (
+                <div key={`${group.id}-${item}`}>
+                  <input
+                    type="checkbox"
+                    id={`${group.id}-${item}`}
+                    name={item}
+                    value={item}
+                    onChange={(e) => handleChange(e, item)}
+                    checked={selectedOptions.has(item)}
+                  />
+                  <label htmlFor={`${group.id}-${item}`}>{item}</label>
+                </div>
+              ))}
+            </div>
+            <div className="break" />
+            <div className="child-groups">
+              {group.children && renderChildGroups(group.children)}
+            </div>
+            <div className="break" />
             <div className="other-option">
               <div className="other-option-checkbox">
                 <input
@@ -100,7 +107,6 @@ const OptionsGroup = ({
             </div>
           </>
         ) : null}
-        {group.children && renderChildGroups(group.children)}
       </fieldset>
     </details>
   );
